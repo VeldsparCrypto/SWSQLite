@@ -6,6 +6,7 @@
 #endif
 
 import Foundation
+import Dispatch
 
 private var alphabet = Array("0123456789abcdef".characters)
 
