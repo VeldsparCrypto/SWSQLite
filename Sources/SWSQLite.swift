@@ -5,6 +5,7 @@
     import CSQLiteDarwin
 #endif
 
+import Dispatch
 import Foundation
 
 private var alphabet = Array("0123456789abcdef".characters)
