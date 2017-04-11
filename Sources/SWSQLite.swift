@@ -6,7 +6,6 @@
 #endif
 
 import Foundation
-import Dispatch
 
 private var alphabet = Array("0123456789abcdef".characters)
 
@@ -178,20 +177,29 @@ public class Value {
         return nil
     }
     
-    public func asString() -> String {
+    public func asString() -> String? {
         if type == .String {
             return stringValue
         }
-        return ""
+        return nil
     }
     
-    public func asNumber() -> NSNumber {
+    public func asNumber() -> NSNumber? {
         
         if type == .Numeric {
             return numericValue
         }
         
-        return NSNumber(value: 0)
+        return nil
+    }
+    
+    public func asInt() -> Int? {
+        
+        if type == .Numeric {
+            return numericValue.intValue
+        }
+        
+        return nil
     }
     
 }
