@@ -149,6 +149,9 @@ public class Value {
         } else if (value is NSNumber) {
             type = .Numeric
             numericValue = value as! NSNumber
+        } else if (value is NSString) {
+            type = .String
+            stringValue = value as! String
         } else {
             type = .Null
         }
@@ -245,6 +248,11 @@ public class Action {
     
 }
 
+public class Result {
+    var results: [Record]? = nil
+    var error: String? = nil
+}
+
 public class SWSQLite {
     
     var db: OpaquePointer?
@@ -258,7 +266,9 @@ public class SWSQLite {
         db = nil;
     }
     
-    public func execute(sql: String, params:[Any], silenceErrors: Bool) {
+    public func execute(sql: String, params:[Any], silenceErrors: Bool) -> Result {
+        
+        let result = Result()
         
         var values: [Value] = []
         for o in params {
@@ -276,34 +286,41 @@ public class SWSQLite {
         } else {
             // error in statement
             if !silenceErrors {
-                print("SQL Error in : \(sql) \n Message: \(String(cString: sqlite3_errmsg(db)))\n")
+                result.error = "\(String(cString: sqlite3_errmsg(db)))"
             }
         }
         
         sqlite3_finalize(stmt)
         
-    }
-    
-    public func execute(compiledAction: SWSQLAction) {
-        execute(sql: compiledAction.statement, params: compiledAction.parameters)
-    }
-    
-    public func execute(sql: String, params:[Any]) {
-        
-        execute(sql: sql, params: params, silenceErrors: false)
+        return result
         
     }
     
-    public func execute(actions: [Action]) {
+    public func execute(compiledAction: SWSQLAction) -> Result {
+        return execute(sql: compiledAction.statement, params: compiledAction.parameters)
+    }
+    
+    public func execute(sql: String, params:[Any]) -> Result {
+        
+        return execute(sql: sql, params: params, silenceErrors: false)
+        
+    }
+    
+    public func execute(actions: [Action]) -> Result {
+        
+        var result = Result()
         
         for action in actions {
-            execute(sql: action.builtStatement, params: [], silenceErrors: true)
+            result = execute(sql: action.builtStatement, params: [], silenceErrors: true)
         }
+        
+        return result
         
     }
     
-    public func query(sql: String, params:[Any]) -> [Record] {
+    public func query(sql: String, params:[Any]) -> Result {
         
+        let result = Result()
         var results: [[String:Value]] = []
         
         var values: [Value] = []
@@ -349,10 +366,12 @@ public class SWSQLite {
             }
         } else {
             // error in statement
-            print("SQL Error in : \(sql) \n Message: \(String(cString: sqlite3_errmsg(db)))\n")
+            result.error = "\(String(cString: sqlite3_errmsg(db)))"
         }
         
-        return results
+        result.results = results
+        
+        return result
         
     }
     
