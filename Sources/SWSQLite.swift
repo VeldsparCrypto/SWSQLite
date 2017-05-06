@@ -36,7 +36,8 @@ public enum DataType {
     case String
     case Blob
     case Null
-    case Numeric
+    case Int
+    case Double
 }
 
 public enum ActionType {
@@ -135,19 +136,19 @@ public class Value {
             type = .String
             stringValue = value as! String
         } else if (mirror.subjectType == Float.self) {
-            type = .Numeric
+            type = .Double
             numericValue = NSNumber(value: value as! Float)
         } else if (mirror.subjectType == Double.self) {
-            type = .Numeric
+            type = .Double
             numericValue = NSNumber(value: value as! Double)
         } else if (mirror.subjectType == Data.self) {
             type = .Blob
             blobValue = value as! Data
         } else if (mirror.subjectType == Int.self) {
-            type = .Numeric
+            type = .Int
             numericValue = NSNumber(value: value as! Int)
         } else if (value is NSNumber) {
-            type = .Numeric
+            type = .Double
             numericValue = value as! NSNumber
         } else if (value is NSString) {
             type = .String
@@ -158,7 +159,7 @@ public class Value {
     }
     
     public func asBool() -> Bool {
-        if type == .Numeric {
+        if type == .Int {
             return numericValue.boolValue
         }
         return false
@@ -170,8 +171,12 @@ public class Value {
             return stringValue
         }
         
-        if type == .Numeric {
-            return numericValue
+        if type == .Int {
+            return numericValue.intValue
+        }
+        
+        if type == .Double {
+            return numericValue.doubleValue
         }
         
         if type == .Blob {
@@ -188,22 +193,26 @@ public class Value {
         return nil
     }
     
-    public func asNumber() -> NSNumber? {
+    public func asInt() -> Int? {
         
-        if type == .Numeric {
-            return numericValue
+        if type == .Int {
+            return numericValue.intValue
         }
         
         return nil
     }
     
-    public func asInt() -> Int? {
+    public func asDouble() -> Double? {
         
-        if type == .Numeric {
-            return numericValue.intValue
+        if type == .Double {
+            return numericValue.doubleValue
         }
         
         return nil
+    }
+    
+    public func getType() -> DataType {
+        return type
     }
     
 }
@@ -236,8 +245,10 @@ public class Action {
         switch type {
         case .String:
             builtStatement = "ALTER TABLE \(table) ADD COLUMN \(addColumn) TEXT;"
-        case .Numeric:
+        case .Double:
             builtStatement = "ALTER TABLE \(table) ADD COLUMN \(addColumn) NUMERIC;"
+        case .Int:
+            builtStatement = "ALTER TABLE \(table) ADD COLUMN \(addColumn) INTEGER;"
         case .Blob:
             builtStatement = "ALTER TABLE \(table) ADD COLUMN \(addColumn) BLOB;"
         default:
@@ -249,8 +260,14 @@ public class Action {
 }
 
 public class Result {
-    var results: [Record]? = nil
-    var error: String? = nil
+    
+    public var results: [Record] = []
+    public var error: String? = nil
+    
+    public init() {
+        
+    }
+    
 }
 
 public class SWSQLite {
@@ -396,8 +413,10 @@ public class SWSQLite {
                 sqlite3_bind_null(stmt, paramCount)
             case .Blob:
                 sqlite3_bind_blob(stmt, paramCount, [UInt8](v.blobValue!), Int32(v.blobValue!.count), SQLITE_TRANSIENT)
-            case .Numeric:
+            case .Double:
                 sqlite3_bind_double(stmt, paramCount, v.numericValue.doubleValue)
+            case .Int:
+                sqlite3_bind_int64(stmt, paramCount, v.numericValue.int64Value)
             }
             
             paramCount += 1
