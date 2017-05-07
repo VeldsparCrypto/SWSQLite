@@ -1,10 +1,10 @@
-
 #if os(Linux)
     import CSQLiteLinux
 #else
     import CSQLiteDarwin
 #endif
 
+import Dispatch
 import Foundation
 
 private var alphabet = Array("0123456789abcdef".characters)
@@ -35,7 +35,8 @@ public enum DataType {
     case String
     case Blob
     case Null
-    case Numeric
+    case Int
+    case Double
 }
 
 public enum ActionType {
@@ -134,27 +135,30 @@ public class Value {
             type = .String
             stringValue = value as! String
         } else if (mirror.subjectType == Float.self) {
-            type = .Numeric
+            type = .Double
             numericValue = NSNumber(value: value as! Float)
         } else if (mirror.subjectType == Double.self) {
-            type = .Numeric
+            type = .Double
             numericValue = NSNumber(value: value as! Double)
         } else if (mirror.subjectType == Data.self) {
             type = .Blob
             blobValue = value as! Data
         } else if (mirror.subjectType == Int.self) {
-            type = .Numeric
+            type = .Int
             numericValue = NSNumber(value: value as! Int)
         } else if (value is NSNumber) {
-            type = .Numeric
+            type = .Double
             numericValue = value as! NSNumber
+        } else if (value is NSString) {
+            type = .String
+            stringValue = value as! String
         } else {
             type = .Null
         }
     }
     
     public func asBool() -> Bool {
-        if type == .Numeric {
+        if type == .Int {
             return numericValue.boolValue
         }
         return false
@@ -166,8 +170,12 @@ public class Value {
             return stringValue
         }
         
-        if type == .Numeric {
-            return numericValue
+        if type == .Int {
+            return numericValue.intValue
+        }
+        
+        if type == .Double {
+            return numericValue.doubleValue
         }
         
         if type == .Blob {
@@ -184,22 +192,26 @@ public class Value {
         return nil
     }
     
-    public func asNumber() -> NSNumber? {
+    public func asInt() -> Int? {
         
-        if type == .Numeric {
-            return numericValue
+        if type == .Int {
+            return numericValue.intValue
         }
         
         return nil
     }
     
-    public func asInt() -> Int? {
+    public func asDouble() -> Double? {
         
-        if type == .Numeric {
-            return numericValue.intValue
+        if type == .Double {
+            return numericValue.doubleValue
         }
         
         return nil
+    }
+    
+    public func getType() -> DataType {
+        return type
     }
     
 }
@@ -232,13 +244,26 @@ public class Action {
         switch type {
         case .String:
             builtStatement = "ALTER TABLE \(table) ADD COLUMN \(addColumn) TEXT;"
-        case .Numeric:
+        case .Double:
             builtStatement = "ALTER TABLE \(table) ADD COLUMN \(addColumn) NUMERIC;"
+        case .Int:
+            builtStatement = "ALTER TABLE \(table) ADD COLUMN \(addColumn) INTEGER;"
         case .Blob:
             builtStatement = "ALTER TABLE \(table) ADD COLUMN \(addColumn) BLOB;"
         default:
             builtStatement = "ALTER TABLE \(table) ADD COLUMN \(addColumn) BLOB;"
         }
+        
+    }
+    
+}
+
+public class Result {
+    
+    public var results: [Record] = []
+    public var error: String? = nil
+    
+    public init() {
         
     }
     
@@ -257,7 +282,9 @@ public class SWSQLite {
         db = nil;
     }
     
-    public func execute(sql: String, params:[Any], silenceErrors: Bool) {
+    public func execute(sql: String, params:[Any], silenceErrors: Bool) -> Result {
+        
+        let result = Result()
         
         var values: [Value] = []
         for o in params {
@@ -275,34 +302,41 @@ public class SWSQLite {
         } else {
             // error in statement
             if !silenceErrors {
-                print("SQL Error in : \(sql) \n Message: \(String(cString: sqlite3_errmsg(db)))\n")
+                result.error = "\(String(cString: sqlite3_errmsg(db)))"
             }
         }
         
         sqlite3_finalize(stmt)
         
-    }
-    
-    public func execute(compiledAction: SWSQLAction) {
-        execute(sql: compiledAction.statement, params: compiledAction.parameters)
-    }
-    
-    public func execute(sql: String, params:[Any]) {
-        
-        execute(sql: sql, params: params, silenceErrors: false)
+        return result
         
     }
     
-    public func execute(actions: [Action]) {
+    public func execute(compiledAction: SWSQLAction) -> Result {
+        return execute(sql: compiledAction.statement, params: compiledAction.parameters)
+    }
+    
+    public func execute(sql: String, params:[Any]) -> Result {
+        
+        return execute(sql: sql, params: params, silenceErrors: false)
+        
+    }
+    
+    public func execute(actions: [Action]) -> Result {
+        
+        var result = Result()
         
         for action in actions {
-            execute(sql: action.builtStatement, params: [], silenceErrors: true)
+            result = execute(sql: action.builtStatement, params: [], silenceErrors: true)
         }
+        
+        return result
         
     }
     
-    public func query(sql: String, params:[Any]) -> [Record] {
+    public func query(sql: String, params:[Any]) -> Result {
         
+        let result = Result()
         var results: [[String:Value]] = []
         
         var values: [Value] = []
@@ -348,12 +382,14 @@ public class SWSQLite {
             }
         } else {
             // error in statement
-            print("SQL Error in : \(sql) \n Message: \(String(cString: sqlite3_errmsg(db)))\n")
+            result.error = "\(String(cString: sqlite3_errmsg(db)))"
         }
+        
+        result.results = results
         
         sqlite3_finalize(stmt)
         
-        return results
+        return result
         
     }
     
@@ -378,8 +414,10 @@ public class SWSQLite {
                 sqlite3_bind_null(stmt, paramCount)
             case .Blob:
                 sqlite3_bind_blob(stmt, paramCount, [UInt8](v.blobValue!), Int32(v.blobValue!.count), SQLITE_TRANSIENT)
-            case .Numeric:
+            case .Double:
                 sqlite3_bind_double(stmt, paramCount, v.numericValue.doubleValue)
+            case .Int:
+                sqlite3_bind_int64(stmt, paramCount, v.numericValue.int64Value)
             }
             
             paramCount += 1
