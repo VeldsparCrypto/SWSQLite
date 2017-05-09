@@ -408,7 +408,15 @@ public class SWSQLite {
             
             switch v.type {
             case .String:
-                let s = v.stringValue!
+                var s = v.stringValue!
+                // check for special replacement strings
+                
+                if s == "%uuid%" {
+                    s = uuid()
+                } else if s == "%clustertime%" {
+                    s = timeuuid()
+                }
+                
                 sqlite3_bind_text(stmt, paramCount, s,Int32(s.characters.count) , SQLITE_TRANSIENT)
             case .Null:
                 sqlite3_bind_null(stmt, paramCount)
