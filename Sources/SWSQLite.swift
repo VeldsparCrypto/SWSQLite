@@ -146,6 +146,12 @@ public class Value {
         } else if (mirror.subjectType == Int.self) {
             type = .Int
             numericValue = NSNumber(value: value as! Int)
+        } else if (mirror.subjectType == Int64.self) {
+            type = .Int
+            numericValue = NSNumber(value: value as! Int64)
+        } else if (mirror.subjectType == UInt64.self) {
+            type = .Int
+            numericValue = NSNumber(value: value as! UInt64)
         } else if (value is NSNumber) {
             type = .Double
             numericValue = value as! NSNumber
@@ -196,6 +202,24 @@ public class Value {
         
         if type == .Int {
             return numericValue.intValue
+        }
+        
+        return nil
+    }
+    
+    public func asInt64() -> Int64? {
+        
+        if type == .Int {
+            return numericValue.int64Value
+        }
+        
+        return nil
+    }
+    
+    public func asUInt64() -> UInt64? {
+        
+        if type == .Int {
+            return numericValue.uint64Value
         }
         
         return nil
