@@ -297,8 +297,12 @@ public class SWSQLite {
     
     var db: OpaquePointer?
     
-    public init(path: String) {
-        let _ = sqlite3_open(path, &db);
+    public init(path: String, filename: String) {
+        
+        // create any folders up until this point as well
+        try! FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
+        
+        let _ = sqlite3_open("\(path)/\(filename)", &db);
     }
     
     public func close() {
