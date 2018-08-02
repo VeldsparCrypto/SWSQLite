@@ -152,9 +152,6 @@ public class Value {
         } else if (mirror.subjectType == UInt64.self) {
             type = .Int
             numericValue = NSNumber(value: value as! UInt64)
-        } else if (mirror.subjectType == UInt32.self) {
-            type = .Int
-            numericValue = NSNumber(value: value as! UInt32)
         } else if (value is NSNumber) {
             type = .Double
             numericValue = value as! NSNumber
@@ -223,15 +220,6 @@ public class Value {
         
         if type == .Int {
             return numericValue.uint64Value
-        }
-        
-        return nil
-    }
-    
-    public func asUInt32() -> UInt32? {
-        
-        if type == .Int {
-            return numericValue.uint32Value
         }
         
         return nil
@@ -311,11 +299,10 @@ public class SWSQLite {
     
     public init(path: String, filename: String) {
         
-        let unixPath = path.replacingOccurrences(of: "file://", with: "")
         // create any folders up until this point as well
-        try! FileManager.default.createDirectory(atPath: unixPath, withIntermediateDirectories: true, attributes: nil)
+        try! FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: false, attributes: nil)
         
-        let _ = sqlite3_open("\(unixPath)/\(filename)", &db);
+        let _ = sqlite3_open("\(path)/\(filename)", &db);
     }
     
     public func close() {
@@ -336,11 +323,8 @@ public class SWSQLite {
         if sqlite3_prepare_v2(db, sql, Int32(sql.utf8.count), &stmt, nil) == SQLITE_OK {
             
             bind(stmt: stmt, params: values);
-            let i = sqlite3_step(stmt)
-            if i != SQLITE_DONE {
-                if !silenceErrors {
-                    result.error = "\(String(cString: sqlite3_errmsg(db)))"
-                }
+            while sqlite3_step(stmt) != SQLITE_DONE {
+                
             }
             
         } else {
