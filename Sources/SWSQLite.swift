@@ -150,6 +150,15 @@ public class Value {
         return nil
     }
     
+    public func asData() -> Data? {
+        
+        if type == .Blob {
+            return blobValue
+        }
+        
+        return nil
+    }
+    
     public func getType() -> DataType {
         return type
     }
@@ -255,7 +264,8 @@ public class SWSQLite {
                         case SQLITE_TEXT:
                             value = Value(String.init(cString:sqlite3_column_text(stmt, Int32(i))))
                         case SQLITE_BLOB:
-                            value = Value(NSData(bytes:sqlite3_column_blob(stmt, Int32(i)), length: Int(sqlite3_column_bytes(stmt, Int32(i)))))
+                            let d = Data(bytes: sqlite3_column_blob(stmt, Int32(i)), count: Int(sqlite3_column_bytes(stmt, Int32(i))))
+                            value = Value(d)
                         case SQLITE_NULL:
                             value = Value(NSNull())
                         default:
