@@ -59,3 +59,4 @@ fastlane/screenshots
 
 iOSInjectionProject/
 /Packages/CSQLite-1.0.1
+/.DS_Store

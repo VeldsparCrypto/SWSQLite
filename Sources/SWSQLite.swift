@@ -227,6 +227,22 @@ public class SWSQLite {
         return execute(sql: compiledAction.statement, params: compiledAction.parameters)
     }
     
+    public func upsert(table: String, values: [String:Any?]) -> Result {
+        
+        var placeholders: [String] = []
+        var columns: [String] = []
+        var params: [Any?] = []
+        
+        for k in values.keys {
+            placeholders.append("?")
+            params.append(values[k])
+            columns.append(k)
+        }
+        
+        return execute(sql: "INSERT OR REPLACE INTO \(table) (\(columns.joined(separator: ",")) VALUES (\(placeholders.joined(separator: ","))", params: params)
+        
+    }
+    
     public func execute(sql: String, params:[Any?]) -> Result {
         
         return execute(sql: sql, params: params, silenceErrors: false)
