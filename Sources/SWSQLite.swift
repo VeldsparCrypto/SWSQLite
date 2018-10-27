@@ -93,11 +93,11 @@ public class Value {
         }
         
         if type == .Int {
-            return numericValue.intValue
+            return Int(numericValue.intValue)
         }
         
         if type == .Double {
-            return numericValue.doubleValue
+            return Double(numericValue.doubleValue)
         }
         
         if type == .Blob {
@@ -225,6 +225,98 @@ public class SWSQLite {
     
     public func execute(compiledAction: SWSQLAction) -> Result {
         return execute(sql: compiledAction.statement, params: compiledAction.parameters)
+    }
+    
+    public func create<T>(_ object: T, pk: String, auto: Bool) where T: Encodable {
+        
+        let mirror = Mirror(reflecting: object)
+        let name = String(describing: object).split(separator: ".").last
+        
+        // find the pk, examine the type and create the table
+        for c in mirror.children {
+            if c.label != nil {
+                if c.label! == pk {
+                    let propMirror = Mirror(reflecting: c.value)
+                    if propMirror.subjectType == String.self {
+                        _ = self.execute(sql: "CREATE TABLE IF NOT EXISTS \(name!) (\(pk) TEXT PRIMARY KEY);", params: [])
+                    } else if propMirror.subjectType == Int.self {
+                        _ = self.execute(sql: "CREATE TABLE IF NOT EXISTS \(name!) (\(pk) INTEGER PRIMARY KEY \(auto ? "AUTOINCREMENT" : ""));", params: [])
+                    }
+                }
+            }
+        }
+        
+        for c in mirror.children {
+            
+            if c.label != nil {
+                let propMirror = Mirror(reflecting: c.value)
+                if propMirror.subjectType == String.self {
+                    _ = self.execute(sql: "ALTER TABLE \(name!) ADD COLUMN \(c.label!) TEXT", params: [], silenceErrors:true)
+                } else if propMirror.subjectType == Int.self || propMirror.subjectType == UInt64.self || propMirror.subjectType == UInt.self || propMirror.subjectType == Int64.self {
+                    _ = self.execute(sql: "ALTER TABLE \(name!) ADD COLUMN \(c.label!) INTEGER", params: [], silenceErrors:true)
+                } else if propMirror.subjectType == Double.self {
+                    _ = self.execute(sql: "ALTER TABLE \(name!) ADD COLUMN \(c.label!) REAL", params: [], silenceErrors:true)
+                } else if propMirror.subjectType == Data.self {
+                    _ = self.execute(sql: "ALTER TABLE \(name!) ADD COLUMN \(c.label!) BLOB", params: [], silenceErrors:true)
+                }
+            }
+
+        }
+        
+    }
+    
+    public func put<T>(_ object: T) -> Result where T: Codable {
+        
+        let mirror = Mirror(reflecting: object)
+        let name = String(describing: object).split(separator: ".").last
+        
+        var placeholders: [String] = []
+        var columns: [String] = []
+        var params: [Any?] = []
+        
+        // find the pk, examine the type and create the table
+        for c in mirror.children {
+            if c.label != nil {
+                placeholders.append("?")
+                params.append(c.value)
+                columns.append(c.label!)
+            }
+        }
+        
+        return execute(sql: "INSERT OR REPLACE INTO \(name!) (\(columns.joined(separator: ",")) VALUES (\(placeholders.joined(separator: ","))", params: params)
+        
+    }
+    
+    public func query<T>(_ object: T, sql: String, params: [Any?]) -> [T] where T: Codable {
+        
+        let r = execute(sql: sql, params: params)
+        if r.error != nil {
+            return []
+        }
+        
+        var results: [T] = []
+        
+        
+        for record in r.results {
+
+            let decoder = JSONDecoder()
+            decoder.dataDecodingStrategy = .base64
+            
+            var row: [String:Any?] = [:]
+            
+            for k in record.keys {
+                row[k] = record[k]!.asAny()
+            }
+            
+            let jsonData = try? JSONSerialization.data(withJSONObject: row, options: .prettyPrinted)
+            let rowObject = try? decoder.decode(T.self, from: jsonData!)
+            
+            results.append(rowObject!)
+            
+        }
+        
+        return results
+        
     }
     
     public func upsert(table: String, values: [String:Any?]) -> Result {
