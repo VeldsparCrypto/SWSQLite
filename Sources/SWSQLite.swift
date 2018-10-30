@@ -47,25 +47,25 @@ public class Value {
         }
         
         let mirror = Mirror(reflecting: value!)
-        if mirror.subjectType == String.self {
+        if mirror.subjectType == String.self || mirror.subjectType == String?.self {
             type = .String
             stringValue = value as! String
-        } else if (mirror.subjectType == Float.self) {
+        } else if (mirror.subjectType == Float.self || mirror.subjectType == Float?.self) {
             type = .Double
             numericValue = NSNumber(value: value as! Float)
-        } else if (mirror.subjectType == Double.self) {
+        } else if (mirror.subjectType == Double.self || mirror.subjectType == Double?.self) {
             type = .Double
             numericValue = NSNumber(value: value as! Double)
-        } else if (mirror.subjectType == Data.self) {
+        } else if (mirror.subjectType == Data.self || mirror.subjectType == Data?.self) {
             type = .Blob
             blobValue = value as! Data
-        } else if (mirror.subjectType == Int.self) {
+        } else if (mirror.subjectType == Int.self || mirror.subjectType == Int?.self) {
             type = .Int
             numericValue = NSNumber(value: value as! Int)
-        } else if (mirror.subjectType == Int64.self) {
+        } else if (mirror.subjectType == Int64.self || mirror.subjectType == Int64?.self) {
             type = .Int
             numericValue = NSNumber(value: value as! Int64)
-        } else if (mirror.subjectType == UInt64.self) {
+        } else if (mirror.subjectType == UInt64.self || mirror.subjectType == UInt64?.self) {
             type = .Int
             numericValue = NSNumber(value: value as! UInt64)
         } else if (value is NSNumber) {
@@ -183,7 +183,7 @@ public class SWSQLite {
     public init(path: String, filename: String) {
         
         // create any folders up until this point as well
-        try! FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: false, attributes: nil)
+        try? FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: false, attributes: nil)
         
         let _ = sqlite3_open("\(path)/\(filename)", &db);
     }
@@ -230,17 +230,17 @@ public class SWSQLite {
     public func create<T>(_ object: T, pk: String, auto: Bool) where T: Encodable {
         
         let mirror = Mirror(reflecting: object)
-        let name = String(describing: object).split(separator: ".").last
+        let name = "\(mirror)".split(separator: " ").last!
         
         // find the pk, examine the type and create the table
         for c in mirror.children {
             if c.label != nil {
                 if c.label! == pk {
                     let propMirror = Mirror(reflecting: c.value)
-                    if propMirror.subjectType == String.self {
-                        _ = self.execute(sql: "CREATE TABLE IF NOT EXISTS \(name!) (\(pk) TEXT PRIMARY KEY);", params: [])
-                    } else if propMirror.subjectType == Int.self {
-                        _ = self.execute(sql: "CREATE TABLE IF NOT EXISTS \(name!) (\(pk) INTEGER PRIMARY KEY \(auto ? "AUTOINCREMENT" : ""));", params: [])
+                    if propMirror.subjectType == String?.self {
+                        _ = self.execute(sql: "CREATE TABLE IF NOT EXISTS \(name) (\(pk) TEXT PRIMARY KEY);", params: [])
+                    } else if propMirror.subjectType == Int?.self {
+                        _ = self.execute(sql: "CREATE TABLE IF NOT EXISTS \(name) (\(pk) INTEGER PRIMARY KEY \(auto ? "AUTOINCREMENT" : ""));", params: [])
                     }
                 }
             }
@@ -250,14 +250,14 @@ public class SWSQLite {
             
             if c.label != nil {
                 let propMirror = Mirror(reflecting: c.value)
-                if propMirror.subjectType == String.self {
-                    _ = self.execute(sql: "ALTER TABLE \(name!) ADD COLUMN \(c.label!) TEXT", params: [], silenceErrors:true)
-                } else if propMirror.subjectType == Int.self || propMirror.subjectType == UInt64.self || propMirror.subjectType == UInt.self || propMirror.subjectType == Int64.self {
-                    _ = self.execute(sql: "ALTER TABLE \(name!) ADD COLUMN \(c.label!) INTEGER", params: [], silenceErrors:true)
-                } else if propMirror.subjectType == Double.self {
-                    _ = self.execute(sql: "ALTER TABLE \(name!) ADD COLUMN \(c.label!) REAL", params: [], silenceErrors:true)
-                } else if propMirror.subjectType == Data.self {
-                    _ = self.execute(sql: "ALTER TABLE \(name!) ADD COLUMN \(c.label!) BLOB", params: [], silenceErrors:true)
+                if propMirror.subjectType == String?.self {
+                    _ = self.execute(sql: "ALTER TABLE \(name) ADD COLUMN \(c.label!) TEXT", params: [], silenceErrors:true)
+                } else if propMirror.subjectType == Int?.self || propMirror.subjectType == UInt64?.self || propMirror.subjectType == UInt?.self || propMirror.subjectType == Int64?.self {
+                    _ = self.execute(sql: "ALTER TABLE \(name) ADD COLUMN \(c.label!) INTEGER", params: [], silenceErrors:true)
+                } else if propMirror.subjectType == Double?.self {
+                    _ = self.execute(sql: "ALTER TABLE \(name) ADD COLUMN \(c.label!) REAL", params: [], silenceErrors:true)
+                } else if propMirror.subjectType == Data?.self {
+                    _ = self.execute(sql: "ALTER TABLE \(name) ADD COLUMN \(c.label!) BLOB", params: [], silenceErrors:true)
                 }
             }
 
@@ -268,22 +268,28 @@ public class SWSQLite {
     public func put<T>(_ object: T) -> Result where T: Codable {
         
         let mirror = Mirror(reflecting: object)
-        let name = String(describing: object).split(separator: ".").last
+        let name = "\(mirror)".split(separator: " ").last!
         
         var placeholders: [String] = []
         var columns: [String] = []
         var params: [Any?] = []
+        let types: [Any.Type] = [String?.self, String.self,Int?.self,Int.self,UInt64?.self,UInt64.self,UInt?.self,UInt.self,Int64?.self,Int64.self,Double?.self,Double.self,Data?.self,Data.self]
         
         // find the pk, examine the type and create the table
         for c in mirror.children {
             if c.label != nil {
-                placeholders.append("?")
-                params.append(c.value)
-                columns.append(c.label!)
+                let propMirror = Mirror(reflecting: c.value)
+                for t in types {
+                    if t == propMirror.subjectType {
+                        placeholders.append("?")
+                        params.append(c.value)
+                        columns.append(c.label!)
+                    }
+                }
             }
         }
         
-        return execute(sql: "INSERT OR REPLACE INTO \(name!) (\(columns.joined(separator: ",")) VALUES (\(placeholders.joined(separator: ","))", params: params)
+        return execute(sql: "INSERT OR REPLACE INTO \(name) (\(columns.joined(separator: ","))) VALUES (\(placeholders.joined(separator: ",")))", params: params)
         
     }
     
