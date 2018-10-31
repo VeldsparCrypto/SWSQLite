@@ -32,6 +32,20 @@ public enum SWSQLOp {
     case Delete
 }
 
+func unwrap(_ subject: Any?) -> Any? {
+    var value: Any?
+    if subject == nil {
+        return nil;
+    }
+    let mirrored = Mirror(reflecting:subject!)
+    if mirrored.displayStyle != .optional {
+        value = subject
+    } else if let firstChild = mirrored.children.first {
+        value = firstChild.value
+    }
+    return value
+}
+
 public class Value {
     
     var stringValue: String!
@@ -41,7 +55,10 @@ public class Value {
     
     public init(_ value: Any?) {
         
-        let testValue: Any? = value
+        var testValue: Any? = nil
+        if value != nil {
+            testValue = unwrap(value)
+        }
         
         if testValue as Any? == nil {
             type = .Null
@@ -229,17 +246,6 @@ public class SWSQLite {
         return execute(sql: compiledAction.statement, params: compiledAction.parameters)
     }
     
-    private func unwrap(_ subject: Any) -> Any? {
-        var value: Any?
-        let mirrored = Mirror(reflecting:subject)
-        if mirrored.displayStyle != .optional {
-            value = subject
-        } else if let firstChild = mirrored.children.first {
-            value = firstChild.value
-        }
-        return value
-    }
-    
     public func create<T>(_ object: T, pk: String, auto: Bool) where T: Encodable {
         
         let mirror = Mirror(reflecting: object)
@@ -309,7 +315,7 @@ public class SWSQLite {
     
     public func query<T>(_ object: T, sql: String, params: [Any?]) -> [T] where T: Codable {
         
-        let r = execute(sql: sql, params: params)
+        let r = query(sql: sql, params: params)
         if r.error != nil {
             return []
         }
@@ -325,13 +331,19 @@ public class SWSQLite {
             var row: [String:Any?] = [:]
             
             for k in record.keys {
-                row[k] = record[k]!.asAny()
+                row[k] = unwrap(record[k]!.asAny())
+            }
+            let encoder = JSONEncoder()
+            encoder.dataEncodingStrategy = .base64
+            
+            do {
+                let jsonData = try? JSONSerialization.data(withJSONObject: row, options: .prettyPrinted)
+                let rowObject: T = try decoder.decode(T.self, from: jsonData!)
+                results.append(rowObject)
+            } catch {
+                print(error)
             }
             
-            let jsonData = try? JSONSerialization.data(withJSONObject: row, options: .prettyPrinted)
-            let rowObject = try? decoder.decode(T.self, from: jsonData!)
-            
-            results.append(rowObject!)
             
         }
         
