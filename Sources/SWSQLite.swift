@@ -41,7 +41,9 @@ public class Value {
     
     public init(_ value: Any?) {
         
-        if value == nil {
+        let testValue: Any? = value
+        
+        if testValue as Any? == nil {
             type = .Null
             return;
         }
@@ -227,6 +229,17 @@ public class SWSQLite {
         return execute(sql: compiledAction.statement, params: compiledAction.parameters)
     }
     
+    private func unwrap(_ subject: Any) -> Any? {
+        var value: Any?
+        let mirrored = Mirror(reflecting:subject)
+        if mirrored.displayStyle != .optional {
+            value = subject
+        } else if let firstChild = mirrored.children.first {
+            value = firstChild.value
+        }
+        return value
+    }
+    
     public func create<T>(_ object: T, pk: String, auto: Bool) where T: Encodable {
         
         let mirror = Mirror(reflecting: object)
@@ -281,8 +294,9 @@ public class SWSQLite {
                 let propMirror = Mirror(reflecting: c.value)
                 for t in types {
                     if t == propMirror.subjectType {
+                        
                         placeholders.append("?")
-                        params.append(c.value)
+                        params.append(unwrap(c.value))
                         columns.append(c.label!)
                     }
                 }
