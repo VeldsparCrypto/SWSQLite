@@ -6,6 +6,7 @@
 
 import Dispatch
 import Foundation
+import SwiftyJSON
 
 internal let SQLITE_STATIC = unsafeBitCast(0, to: sqlite3_destructor_type.self)
 internal let SQLITE_TRANSIENT = unsafeBitCast(-1, to: sqlite3_destructor_type.self)
@@ -337,8 +338,9 @@ public class SWSQLite {
             encoder.dataEncodingStrategy = .base64
             
             do {
-                let jsonData = try? JSONSerialization.data(withJSONObject: row, options: .prettyPrinted)
-                let rowObject: T = try decoder.decode(T.self, from: jsonData!)
+                let jd = JSON(row)
+                let jsonData = try jd.rawData(options: .prettyPrinted)
+                let rowObject: T = try decoder.decode(T.self, from: jsonData)
                 results.append(rowObject)
             } catch {
                 print(error)
