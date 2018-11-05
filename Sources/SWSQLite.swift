@@ -277,7 +277,7 @@ public class SWSQLite {
         }
         
         for i in indexes {
-            _ = self.execute(sql: "CREATE INDEX IF NOT EXISTS idx_\(name)_\(i.replacingOccurrences(of: ",", with: "_")) ON \(name) (\(i);", params: [], silenceErrors:true)
+            _ = self.execute(sql: "CREATE INDEX IF NOT EXISTS idx_\(name)_\(i.replacingOccurrences(of: ",", with: "_")) ON \(name) (\(i));", params: [], silenceErrors:true)
         }
         
     }
