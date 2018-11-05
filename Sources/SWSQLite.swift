@@ -20,12 +20,6 @@ public enum DataType {
     case Double
 }
 
-public enum ActionType {
-    case CreateTable
-    case CreateIndex
-    case AddColumn
-}
-
 public enum SWSQLOp {
     case Insert
     case Update
@@ -246,7 +240,7 @@ public class SWSQLite {
         return execute(sql: compiledAction.statement, params: compiledAction.parameters)
     }
     
-    public func create<T>(_ object: T, pk: String, auto: Bool) where T: Encodable {
+    public func create<T>(_ object: T, pk: String, auto: Bool, indexes: [String]) where T: Encodable {
         
         let mirror = Mirror(reflecting: object)
         let name = "\(mirror)".split(separator: " ").last!
@@ -280,6 +274,10 @@ public class SWSQLite {
                 }
             }
 
+        }
+        
+        for i in indexes {
+            _ = self.execute(sql: "CREATE INDEX IF NOT EXISTS idx_\(name)_\(i.replacingOccurrences(of: ",", with: "_")) ON \(name) (\(i);", params: [], silenceErrors:true)
         }
         
     }
