@@ -1,7 +1,7 @@
 #if os(Linux)
-    import CSQLiteLinux
+import CSQLiteLinux
 #else
-    import CSQLiteDarwin
+import CSQLiteDarwin
 #endif
 
 import Dispatch
@@ -273,7 +273,7 @@ public class SWSQLite {
                     _ = self.execute(sql: "ALTER TABLE \(name) ADD COLUMN \(c.label!) BLOB", params: [], silenceErrors:true)
                 }
             }
-
+            
         }
         
         for i in indexes {
@@ -322,24 +322,40 @@ public class SWSQLite {
         
         
         for record in r.results {
-
+            
             let decoder = JSONDecoder()
             decoder.dataDecodingStrategy = .base64
             
-            var row: [String:Any?] = [:]
+            var row: [String] = []
             
             for k in record.keys {
-                row[k] = unwrap(record[k]!.asAny())
+                
+                switch record[k]!.getType() {
+                case .Null:
+                    row.append("\"\(k)\" : null")
+                    break
+                case .Blob:
+                    row.append("\"\(k)\" : \"\(record[k]!.asData()!.base64EncodedString())\"")
+                    break
+                case .Double:
+                    row.append("\"\(k)\" : \(unwrap(record[k]!.asDouble())!)")
+                    break
+                case .Int:
+                    row.append("\"\(k)\" : \(unwrap(record[k]!.asInt())!)")
+                    break
+                case .String:
+                    row.append("\"\(k)\" : \"\(unwrap(record[k]!.asString())!)\"")
+                    break
+                }
             }
-            let encoder = JSONEncoder()
-            encoder.dataEncodingStrategy = .base64
+            
+            var jsonString = "{\(row.joined(separator: ","))}"
             
             do {
-                let jd = JSON(row)
-                let jsonData = try jd.rawData(options: .prettyPrinted)
-                let rowObject: T = try decoder.decode(T.self, from: jsonData)
+                let rowObject: T = try decoder.decode(T.self, from: Data(bytes: Array(jsonString.utf8)))
                 results.append(rowObject)
             } catch {
+                print("JSON causing the issue: \n\n\(jsonString)\n")
                 print(error)
             }
             
@@ -480,3 +496,4 @@ public class SWSQLAction {
     }
     
 }
+

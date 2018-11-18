@@ -7,18 +7,44 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		OBJ_18 /* SWSQLite.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_8 /* SWSQLite.swift */; };
-		OBJ_25 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_6 /* Package.swift */; };
+		3A1C0E09218C8536002AA4EE /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A1C0E08218C8536002AA4EE /* SwiftyJSON.swift */; };
+		OBJ_22 /* SWSQLite.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_8 /* SWSQLite.swift */; };
+		OBJ_24 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = "SwiftyJSON::SwiftyJSON::Product" /* SwiftyJSON.framework */; };
+		OBJ_32 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_6 /* Package.swift */; };
+		OBJ_37 /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_13 /* SwiftyJSON.swift */; };
+		OBJ_44 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_12 /* Package.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		3A1C0DEE218A01A5002AA4EE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = OBJ_1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = "SwiftyJSON::SwiftyJSON";
+			remoteInfo = SwiftyJSON;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		3A1C0E08218C8536002AA4EE /* SwiftyJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftyJSON.swift; sourceTree = "<group>"; };
+		OBJ_12 /* Package.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = Package.swift; path = "/Users/adrian/Documents/projects/SWSQLite/.build/checkouts/SwiftyJSON.git-3043514560129222422/Package.swift"; sourceTree = "<group>"; };
+		OBJ_13 /* SwiftyJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftyJSON.swift; sourceTree = "<group>"; };
 		OBJ_6 /* Package.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		OBJ_8 /* SWSQLite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SWSQLite.swift; sourceTree = "<group>"; };
-		"SWSQLite::SWSQLite::Product" /* SWSQLite.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SWSQLite.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		"SWSQLite::SWSQLite::Product" /* SWSQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SWSQLite.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		"SwiftyJSON::SwiftyJSON::Product" /* SwiftyJSON.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SwiftyJSON.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		OBJ_19 /* Frameworks */ = {
+		OBJ_23 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 0;
+			files = (
+				OBJ_24 /* SwiftyJSON.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		OBJ_38 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 0;
 			files = (
@@ -31,34 +57,46 @@
 		OBJ_10 /* Dependencies */ = {
 			isa = PBXGroup;
 			children = (
+				OBJ_11 /* SwiftyJSON 4.1.0 */,
 			);
 			name = Dependencies;
 			sourceTree = "<group>";
 		};
-		OBJ_11 /* Products */ = {
+		OBJ_11 /* SwiftyJSON 4.1.0 */ = {
 			isa = PBXGroup;
 			children = (
+				OBJ_12 /* Package.swift */,
+				OBJ_13 /* SwiftyJSON.swift */,
+			);
+			name = "SwiftyJSON 4.1.0";
+			path = ".build/checkouts/SwiftyJSON.git-3043514560129222422/Source";
+			sourceTree = SOURCE_ROOT;
+		};
+		OBJ_14 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				"SwiftyJSON::SwiftyJSON::Product" /* SwiftyJSON.framework */,
 				"SWSQLite::SWSQLite::Product" /* SWSQLite.framework */,
 			);
 			name = Products;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		OBJ_5 /*  */ = {
+		OBJ_5 = {
 			isa = PBXGroup;
 			children = (
 				OBJ_6 /* Package.swift */,
 				OBJ_7 /* Sources */,
 				OBJ_9 /* Tests */,
 				OBJ_10 /* Dependencies */,
-				OBJ_11 /* Products */,
+				OBJ_14 /* Products */,
 			);
-			name = "";
 			sourceTree = "<group>";
 		};
 		OBJ_7 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
 				OBJ_8 /* SWSQLite.swift */,
+				3A1C0E08218C8536002AA4EE /* SwiftyJSON.swift */,
 			);
 			path = Sources;
 			sourceTree = SOURCE_ROOT;
@@ -75,14 +113,15 @@
 /* Begin PBXNativeTarget section */
 		"SWSQLite::SWSQLite" /* SWSQLite */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = OBJ_14 /* Build configuration list for PBXNativeTarget "SWSQLite" */;
+			buildConfigurationList = OBJ_18 /* Build configuration list for PBXNativeTarget "SWSQLite" */;
 			buildPhases = (
-				OBJ_17 /* Sources */,
-				OBJ_19 /* Frameworks */,
+				OBJ_21 /* Sources */,
+				OBJ_23 /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				OBJ_25 /* PBXTargetDependency */,
 			);
 			name = SWSQLite;
 			productName = SWSQLite;
@@ -91,9 +130,9 @@
 		};
 		"SWSQLite::SwiftPMPackageDescription" /* SWSQLitePackageDescription */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = OBJ_21 /* Build configuration list for PBXNativeTarget "SWSQLitePackageDescription" */;
+			buildConfigurationList = OBJ_28 /* Build configuration list for PBXNativeTarget "SWSQLitePackageDescription" */;
 			buildPhases = (
-				OBJ_24 /* Sources */,
+				OBJ_31 /* Sources */,
 			);
 			buildRules = (
 			);
@@ -103,6 +142,36 @@
 			productName = SWSQLitePackageDescription;
 			productType = "com.apple.product-type.framework";
 		};
+		"SwiftyJSON::SwiftPMPackageDescription" /* SwiftyJSONPackageDescription */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = OBJ_40 /* Build configuration list for PBXNativeTarget "SwiftyJSONPackageDescription" */;
+			buildPhases = (
+				OBJ_43 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SwiftyJSONPackageDescription;
+			productName = SwiftyJSONPackageDescription;
+			productType = "com.apple.product-type.framework";
+		};
+		"SwiftyJSON::SwiftyJSON" /* SwiftyJSON */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = OBJ_33 /* Build configuration list for PBXNativeTarget "SwiftyJSON" */;
+			buildPhases = (
+				OBJ_36 /* Sources */,
+				OBJ_38 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SwiftyJSON;
+			productName = SwiftyJSON;
+			productReference = "SwiftyJSON::SwiftyJSON::Product" /* SwiftyJSON.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -110,11 +179,6 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 9999;
-				TargetAttributes = {
-					"SWSQLite::SWSQLite" = {
-						LastSwiftMigration = 0940;
-					};
-				};
 			};
 			buildConfigurationList = OBJ_2 /* Build configuration list for PBXProject "SWSQLite" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -123,38 +187,65 @@
 			knownRegions = (
 				en,
 			);
-			mainGroup = OBJ_5 /*  */;
-			productRefGroup = OBJ_11 /* Products */;
+			mainGroup = OBJ_5;
+			productRefGroup = OBJ_14 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				"SWSQLite::SWSQLite" /* SWSQLite */,
 				"SWSQLite::SwiftPMPackageDescription" /* SWSQLitePackageDescription */,
+				"SwiftyJSON::SwiftyJSON" /* SwiftyJSON */,
+				"SwiftyJSON::SwiftPMPackageDescription" /* SwiftyJSONPackageDescription */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
-		OBJ_17 /* Sources */ = {
+		OBJ_21 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 0;
 			files = (
-				OBJ_18 /* SWSQLite.swift in Sources */,
+				OBJ_22 /* SWSQLite.swift in Sources */,
+				3A1C0E09218C8536002AA4EE /* SwiftyJSON.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		OBJ_24 /* Sources */ = {
+		OBJ_31 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 0;
 			files = (
-				OBJ_25 /* Package.swift in Sources */,
+				OBJ_32 /* Package.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		OBJ_36 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 0;
+			files = (
+				OBJ_37 /* SwiftyJSON.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		OBJ_43 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 0;
+			files = (
+				OBJ_44 /* Package.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		OBJ_25 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = "SwiftyJSON::SwiftyJSON" /* SwiftyJSON */;
+			targetProxy = 3A1C0DEE218A01A5002AA4EE /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
-		OBJ_15 /* Debug */ = {
+		OBJ_19 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ENABLE_TESTABILITY = YES;
@@ -175,13 +266,12 @@
 				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
-				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 3.0;
 				TARGET_NAME = SWSQLite;
 			};
 			name = Debug;
 		};
-		OBJ_16 /* Release */ = {
+		OBJ_20 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ENABLE_TESTABILITY = YES;
@@ -202,13 +292,12 @@
 				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
-				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 3.0;
 				TARGET_NAME = SWSQLite;
 			};
 			name = Release;
 		};
-		OBJ_22 /* Debug */ = {
+		OBJ_29 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				LD = /usr/bin/true;
@@ -216,15 +305,6 @@
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
-		};
-		OBJ_23 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				LD = /usr/bin/true;
-				OTHER_SWIFT_FLAGS = "-swift-version 3 -I $(TOOLCHAIN_DIR)/usr/lib/swift/pm/3 -target x86_64-apple-macosx10.10 -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk";
-				SWIFT_VERSION = 3.0;
-			};
-			name = Release;
 		};
 		OBJ_3 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -248,6 +328,61 @@
 			};
 			name = Debug;
 		};
+		OBJ_30 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				LD = /usr/bin/true;
+				OTHER_SWIFT_FLAGS = "-swift-version 3 -I $(TOOLCHAIN_DIR)/usr/lib/swift/pm/3 -target x86_64-apple-macosx10.10 -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
+		OBJ_34 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = SWSQLite.xcodeproj/SwiftyJSON_Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) $(TOOLCHAIN_DIR)/usr/lib/swift/macosx";
+				OTHER_CFLAGS = "$(inherited)";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = SwiftyJSON;
+				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
+				TARGET_NAME = SwiftyJSON;
+			};
+			name = Debug;
+		};
+		OBJ_35 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = SWSQLite.xcodeproj/SwiftyJSON_Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) $(TOOLCHAIN_DIR)/usr/lib/swift/macosx";
+				OTHER_CFLAGS = "$(inherited)";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = SwiftyJSON;
+				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
+				TARGET_NAME = SwiftyJSON;
+			};
+			name = Release;
+		};
 		OBJ_4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -268,14 +403,32 @@
 			};
 			name = Release;
 		};
+		OBJ_41 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				LD = /usr/bin/true;
+				OTHER_SWIFT_FLAGS = "-swift-version 3 -I $(TOOLCHAIN_DIR)/usr/lib/swift/pm/3 -target x86_64-apple-macosx10.10 -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		OBJ_42 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				LD = /usr/bin/true;
+				OTHER_SWIFT_FLAGS = "-swift-version 3 -I $(TOOLCHAIN_DIR)/usr/lib/swift/pm/3 -target x86_64-apple-macosx10.10 -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		OBJ_14 /* Build configuration list for PBXNativeTarget "SWSQLite" */ = {
+		OBJ_18 /* Build configuration list for PBXNativeTarget "SWSQLite" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				OBJ_15 /* Debug */,
-				OBJ_16 /* Release */,
+				OBJ_19 /* Debug */,
+				OBJ_20 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -289,11 +442,29 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		OBJ_21 /* Build configuration list for PBXNativeTarget "SWSQLitePackageDescription" */ = {
+		OBJ_28 /* Build configuration list for PBXNativeTarget "SWSQLitePackageDescription" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				OBJ_22 /* Debug */,
-				OBJ_23 /* Release */,
+				OBJ_29 /* Debug */,
+				OBJ_30 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		OBJ_33 /* Build configuration list for PBXNativeTarget "SwiftyJSON" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				OBJ_34 /* Debug */,
+				OBJ_35 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		OBJ_40 /* Build configuration list for PBXNativeTarget "SwiftyJSONPackageDescription" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				OBJ_41 /* Debug */,
+				OBJ_42 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
