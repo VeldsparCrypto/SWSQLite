@@ -8,7 +8,7 @@ let package = Package(
         .library(name: "SWSQLite", targets: ["SWSQLite"]),
         ],
     dependencies: [
-        .package(url: "https://github.com/VeldsparCrypto/CSQlite.git", .branch("master")),],
+        .package(url: "https://github.com/VeldsparCrypto/CSQlite.git", .exact("2.0.1")),],
     targets: [
         .target(
             name: "SWSQLite",
