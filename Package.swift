@@ -9,10 +9,6 @@ let package = Package(
         ],
     dependencies: [
         .package(url: "https://github.com/VeldsparCrypto/CSQlite.git", .exact("1.0.2")),],
-    targets: [
-        .target(
-            name: "SWSQLite",
-            dependencies: []),
-        ]
+    targets: []
 )
 
