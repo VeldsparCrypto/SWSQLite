@@ -199,6 +199,8 @@ public class SWSQLite {
         try? FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: false, attributes: nil)
         
         let _ = sqlite3_open("\(path)/\(filename)", &db);
+        sqlite3_create_function(db, "SHA512", 1, SQLITE_ANY, nil, nil, sha512step, sha512finalize)
+        
     }
     
     public func close() {
