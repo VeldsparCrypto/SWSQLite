@@ -5,7 +5,7 @@ import PackageDescription
 let package = Package(
     name: "SWSQLite",
     products: [
-        .library(name: "SWSQLite", targets: ["SWSQLite"]),
+        .library(name: "SWSQLite"),
         ],
     dependencies: [
         .package(url: "https://github.com/VeldsparCrypto/CSQlite.git", .exact("1.0.2")),],
