@@ -9,7 +9,8 @@ let package = Package(
     targets: [
         .target(
             name: "SWSQLite",
-            dependencies: []),
+            dependencies: [],
+            path: "./Sources"),
     ],
     swiftLanguageVersions: [
         4
