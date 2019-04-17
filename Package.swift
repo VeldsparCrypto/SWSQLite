@@ -3,9 +3,13 @@ import PackageDescription
 
 let package = Package(
     name: "SWSQLite",
-    targets: [Target(name: "SWSQLite", dependencies:[])],
     dependencies: [
         .package(url: "https://github.com/VeldsparCrypto/CSQlite.git", .exact("1.0.8")),
     ],
-        swiftLanguageVersions: [4]
+    targets: [
+        Target(name: "SWSQLite", dependencies:[])
+    ],
+    swiftLanguageVersions: [
+        4
+    ]
 )
