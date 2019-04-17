@@ -7,7 +7,9 @@ let package = Package(
         .package(url: "https://github.com/VeldsparCrypto/CSQlite.git", .exact("1.0.8")),
     ],
     targets: [
-        Target(name: "SWSQLite", dependencies:[])
+        .target(
+            name: "SWSQLite",
+            dependencies: [],
     ],
     swiftLanguageVersions: [
         4
